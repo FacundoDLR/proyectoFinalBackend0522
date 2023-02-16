@@ -5,6 +5,7 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const clienstRouter = require('./routes/clients')
 
 const conection = require('./db/dbConection')
 
@@ -20,6 +21,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //RUTAS
 app.use('/', indexRouter); //ruta principal
 app.use('/users', usersRouter);
+app.use('/clients', clienstRouter);
 
 //CONEXION A DB
 conection();
