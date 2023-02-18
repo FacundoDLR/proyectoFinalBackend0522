@@ -8,7 +8,7 @@ const getClients = async (req, res) => {
 
 const postClient = async (req, res) => {
     const client = new clientModel(req.body);
-    // await client.save();
+    await client.save();
 
     res.status(201).json({
         clientName: client.clientName,
@@ -53,8 +53,47 @@ const putClient = async (req, res) => {
     }
 }
 
+const deleteClient = async (req, res) => {
+    try {
+        const client = await clientModel.findByIdAndDelete(req.params.id);
+        if(client){
+            res.status(200).json({
+                clientName: req.body.clientName,
+                clientLastName: req.body.clientLastName,
+                clientPhone: req.body.clientPhone,
+                clientType: req.body.clientType,
+                clientService: req.body.clientService,
+                clientRating: req.body.clientRating,
+                clientVisits: [req.body.clientVisits],
+                statusCode: 200,
+                msg: "Cliente eliminado correctamente"
+            });
+        }else{
+            res.status(404).json({
+                clientName: null,
+                clientLastName:null,
+                clientPhone: null,
+                clientType: null,
+                clientService: null,
+                clientRating: null,
+                clientVisits: null,
+                statusCode: 404,
+                msg: "El ID ingresado es invalido, intente corregir el ID"
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            clientName: req.body.clientName,
+            clientLastName: req.body.clientLastName,
+            statusCode: 500,
+            msg: "Error - " + error.message,
+        });
+    }
+}
+
 module.exports = {
     getClients, 
     postClient,
-    putClient
+    putClient,
+    deleteClient
 };

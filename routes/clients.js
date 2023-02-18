@@ -9,4 +9,6 @@ router.post('/registro', ClientControllers.postClient);
 
 router.put('/actualizar/:id', ClientControllers.putClient);
 
+router.delete('/eliminar/:id', ClientControllers.deleteClient);
+
 module.exports = router;
