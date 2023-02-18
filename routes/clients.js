@@ -7,4 +7,6 @@ router.get('/', ClientControllers.getClients);
 
 router.post('/registro', ClientControllers.postClient);
 
+router.put('/actualizar/:id', ClientControllers.putClient);
+
 module.exports = router;
