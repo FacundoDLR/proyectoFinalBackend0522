@@ -1,26 +1,79 @@
 const clientModel = require('../models/ClientModel');
 
 const getClients = async (req, res) => {
-    const clients = await clientModel.find();
-    // res.send(`<h2>Lista de Clientes</h2>`)
-    res.status(200).json(clients);
+    try {
+        const clients = await clientModel.find();
+
+        if(clients){
+            res.status(200).json({
+                msg: "Lista de Clientes",
+                clients
+            });
+        }else{
+            res.status(404).json({
+                clients: null,
+                statusCode: 404,
+                msg: "No se encontro la lista de usuarios, intente mas tarde"
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            clients,
+            statusCode: 500,
+            msg: "Error - " + error.message,
+        })
+    }
+
 };
 
-const postClient = async (req, res) => {
-    const client = new clientModel(req.body);
-    await client.save();
+const getClientByName = async (req, res) => {
+    const name = req.query.name;
+    const client = await clientModel.find({clientName: name});
 
-    res.status(201).json({
-        clientName: client.clientName,
-        clientLastName: client.clientLastName,
-        clientPhone: client.clientPhone,
-        clientType: client.clientType,
-        clientService: client.clientService,
-        clientRating: client.clientRating,
-        clientVisits: [client.clientVisits],
-        statusCode: 201,
-        msg: "Cliente agregado correctamente"
-    })
+    if(client){
+        res.status(200).json({
+            client,
+            statusCode: 200,
+        })
+    }else{
+        res.status(404).json({
+            client: null,
+            statusCode: 404,
+            msg: "Cliente no encontrado, revise letras mayusculas y/o minusculas o intente con otro nombre"
+        })
+    }
+}
+/* -------------------------------------------------------- */
+const postClient = async (req, res) => {
+    try {
+        const client = new clientModel(req.body);
+        await client.save();
+    
+        res.status(201).json({
+            clientName: client.clientName,
+            clientLastName: client.clientLastName,
+            clientPhone: client.clientPhone,
+            clientType: client.clientType,
+            clientService: client.clientService,
+            clientRating: client.clientRating,
+            clientVisits: [client.clientVisits],
+            statusCode: 201,
+            msg: "Cliente agregado correctamente"
+        })
+    } catch (error) {
+        res.status(500).json({
+            clientName: req.body.clientName,
+            clientLastName: req.body.clientLastName,
+            clientPhone: req.body.clientPhone,
+            clientType: req.body.clientType,
+            clientService: req.body.clientService,
+            clientRating: req.body.clientRating,
+            clientVisits: [req.body.clientVisits],
+            statusCode: 500,
+            msg: "Error - " + error.message
+        })
+    }
+
 }
 
 const putClient = async (req, res) => {
@@ -92,7 +145,8 @@ const deleteClient = async (req, res) => {
 }
 
 module.exports = {
-    getClients, 
+    getClients,
+    getClientByName, 
     postClient,
     putClient,
     deleteClient
