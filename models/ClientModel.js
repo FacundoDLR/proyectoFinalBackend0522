@@ -33,7 +33,7 @@ const ClientSchema = new Schema({
         unique: false
     },
     clientVisits: {
-        type: Date,
+        type: String,
         required: true,
         unique: false
     },
