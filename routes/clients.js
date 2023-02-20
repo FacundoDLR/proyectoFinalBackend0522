@@ -2,6 +2,8 @@ const express = require('express');
 const { check } = require('express-validator');
 const router = express.Router();
 const ClientControllers = require('../controllers/ClientControllers');
+const checkClient = require('../middlewares/checkClient');
+const checkClientId = require('../middlewares/checkClientId');
 
 //LISTA DE RUTAS
 router.get('/', ClientControllers.getClients);
@@ -17,7 +19,7 @@ router.post('/registro',[
     check("clientRating").not().isEmpty().withMessage("Por favor ingresa una puntuacion para el cliente desde 1 a 5 puntos, Ej: N°/N°"),
     check("clientVisits").not().isEmpty().withMessage("Por favor ingresa la fecha de la ultima visita del cliente, Ej: DD-MM-AAAA"),
 
-], ClientControllers.postClient);
+],checkClient, ClientControllers.postClient);
 
 router.put('/actualizar/:id',[
     check("clientName").not().isEmpty().withMessage("El nombre del cliente es obligatorio"),
@@ -28,8 +30,8 @@ router.put('/actualizar/:id',[
     check("clientRating").not().isEmpty().withMessage("Por favor ingresa una puntuacion para el cliente desde 1 a 5 puntos, Ej: N°/N°"),
     check("clientVisits").not().isEmpty().withMessage("Por favor ingresa la fecha de la ultima visita del cliente, Ej: DD-MM-AAAA"),
 
-], ClientControllers.putClient);
+],checkClient, ClientControllers.putClient);
 
-router.delete('/eliminar/:id', ClientControllers.deleteClient);
+router.delete('/eliminar/:id',checkClientId, ClientControllers.deleteClient);
 
 module.exports = router;

@@ -149,7 +149,7 @@ const putClient = async (req, res) => {
 
 const deleteClient = async (req, res) => {
     try {
-        const client = await clientModel.findByIdAndDelete(req.params.id);
+        const client = await clientModel.findByIdAndDelete(req.params._id);
         if(client){
             res.status(200).json({
                 clientName: req.body.clientName,
