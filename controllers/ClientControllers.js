@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const clientModel = require('../models/ClientModel');
 
 const getClients = async (req, res) => {
@@ -46,20 +47,40 @@ const getClientByName = async (req, res) => {
 /* -------------------------------------------------------- */
 const postClient = async (req, res) => {
     try {
-        const client = new clientModel(req.body);
-        await client.save();
-    
-        res.status(201).json({
-            clientName: client.clientName,
-            clientLastName: client.clientLastName,
-            clientPhone: client.clientPhone,
-            clientType: client.clientType,
-            clientService: client.clientService,
-            clientRating: client.clientRating,
-            clientVisits: [client.clientVisits],
-            statusCode: 201,
-            msg: "Cliente agregado correctamente"
-        })
+        const validationError = validationResult(req)
+
+        if (validationError.isEmpty()) {
+            const client = new clientModel(req.body);
+            // await client.save();
+        
+            res.status(201).json({
+                clientName: client.clientName,
+                clientLastName: client.clientLastName,
+                clientPhone: client.clientPhone,
+                clientType: client.clientType,
+                clientService: client.clientService,
+                clientRating: client.clientRating,
+                clientVisits: [client.clientVisits],
+                statusCode: 201,
+                msg: "Cliente agregado correctamente",
+                error: null
+            })
+
+        }else{
+            res.status(400).json({
+                clientName: null,
+                clientLastName: null,
+                clientPhone: null,
+                clientType: null,
+                clientService: null,
+                clientRating: null,
+                clientVisits: [null],
+                statusCode: 400,
+                msg: "Los datos ingresados son incorrectos, por favor revisa los campos con errores",
+                error: validationError.errors
+            })
+        }
+
     } catch (error) {
         res.status(500).json({
             clientName: req.body.clientName,
@@ -78,19 +99,39 @@ const postClient = async (req, res) => {
 
 const putClient = async (req, res) => {
     try {
-        await clientModel.findByIdAndUpdate(req.params.id, req.body);
+        const validationError = validationResult(req)
 
-        res.status(200).json({
-            clientName: req.body.clientName,
-            clientLastName: req.body.clientLastName,
-            clientPhone: req.body.clientPhone,
-            clientType: req.body.clientType,
-            clientService: req.body.clientService,
-            clientRating: req.body.clientRating,
-            clientVisits: [req.body.clientVisits],
-            statusCode: 200,
-            msg: "Cliente actualizado correctamente"
-        })
+        
+        if (validationError.isEmpty()) {
+            await clientModel.findByIdAndUpdate(req.params.id, req.body);
+
+            res.status(200).json({
+                clientName: req.body.clientName,
+                clientLastName: req.body.clientLastName,
+                clientPhone: req.body.clientPhone,
+                clientType: req.body.clientType,
+                clientService: req.body.clientService,
+                clientRating: req.body.clientRating,
+                clientVisits: [req.body.clientVisits],
+                statusCode: 200,
+                msg: "Cliente actualizado correctamente",
+                error: null
+            })
+        }else{
+            res.status(400).json({
+                clientName: null,
+                clientLastName: null,
+                clientPhone: null,
+                clientType: null,
+                clientService: null,
+                clientRating: null,
+                clientVisits: [null],
+                statusCode: 400,
+                msg: "Los datos ingresados son incorrectos, por favor revisa los campos con errores",
+                error: validationError.errors
+            })
+        }
+
     } catch (error) {
         res.status(500).json({
             clientName: req.body.clientName,
