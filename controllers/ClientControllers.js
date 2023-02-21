@@ -1,14 +1,16 @@
 const { validationResult } = require('express-validator');
 const clientModel = require('../models/ClientModel');
+const {default: axios} = require("axios")
 
 const getClients = async (req, res) => {
+
     try {
         const clients = await clientModel.find();
 
         if(clients){
             res.status(200).json({
                 msg: "Lista de Clientes",
-                clients
+                clients: clients,
             });
         }else{
             res.status(404).json({
@@ -19,7 +21,6 @@ const getClients = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({
-            clients,
             statusCode: 500,
             msg: "Error - " + error.message,
         })
@@ -43,6 +44,35 @@ const getClientByName = async (req, res) => {
             msg: "Cliente no encontrado, revise letras mayusculas y/o minusculas o intente con otro nombre"
         })
     }
+}
+
+const getClientJPH = async (req, res) => {
+
+    try {
+        const clientJPH = await axios.get("https://jsonplaceholder.typicode.com/users",{
+            headers: {"Accept-Encoding": "gzip, deflate, compress"},
+        }
+        );
+
+        if (clientJPH) {
+            res.status(200).json({
+                msg: "Lista de clientes de {JSON} Placeholder",
+                statusCode: 200,
+                clients: clientJPH.data,
+            })
+        }else{
+            res.status(404).json({
+                msg: "No se encontro la lista de clientes de {JSON} Placeholder. Intente mas tarde",
+                statusCode: 404,
+                cleints: null,
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            msg: "Error - " + error.message,
+            statusCode: 500,
+        })
+    };
 }
 /* -------------------------------------------------------- */
 const postClient = async (req, res) => {
@@ -83,13 +113,6 @@ const postClient = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            clientName: req.body.clientName,
-            clientLastName: req.body.clientLastName,
-            clientPhone: req.body.clientPhone,
-            clientType: req.body.clientType,
-            clientService: req.body.clientService,
-            clientRating: req.body.clientRating,
-            clientVisits: [req.body.clientVisits],
             statusCode: 500,
             msg: "Error - " + error.message
         })
@@ -134,13 +157,6 @@ const putClient = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            clientName: req.body.clientName,
-            clientLastName: req.body.clientLastName,
-            clientPhone: req.body.clientPhone,
-            clientType: req.body.clientType,
-            clientService: req.body.clientService,
-            clientRating: req.body.clientRating,
-            clientVisits: [req.body.clientVisits],
             statusCode: 500,
             msg: "Error - " + error.message
         })
@@ -177,8 +193,6 @@ const deleteClient = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({
-            clientName: req.body.clientName,
-            clientLastName: req.body.clientLastName,
             statusCode: 500,
             msg: "Error - " + error.message,
         });
@@ -187,7 +201,8 @@ const deleteClient = async (req, res) => {
 
 module.exports = {
     getClients,
-    getClientByName, 
+    getClientByName,
+    getClientJPH, 
     postClient,
     putClient,
     deleteClient

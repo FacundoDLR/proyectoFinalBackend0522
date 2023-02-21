@@ -10,6 +10,8 @@ router.get('/', ClientControllers.getClients);
 
 router.get('/buscar', ClientControllers.getClientByName);
 
+router.get('/clientesjph', ClientControllers.getClientJPH);
+
 router.post('/registro',[
     check("clientName").not().isEmpty().withMessage("El nombre del cliente es obligatorio"),
     check("clientLastName").not().isEmpty().withMessage("El Apellido del cliente es obligatorio"),
